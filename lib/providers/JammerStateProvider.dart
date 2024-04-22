@@ -61,6 +61,10 @@ class JammerStateProvider extends ChangeNotifier {
       error_msg="";
       lastUpdate= DateTime.now();
     }
+    on SocketException {
+      _failed_attemps++;
+      error_msg= "Connection Failed!";
+    }
     on Exception catch (e)  {
       _failed_attemps++;
       error_msg= e.toString();

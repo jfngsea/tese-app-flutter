@@ -10,9 +10,9 @@ class WaveformEntry {
   
   List<Point<double>> points_fft = [];
 
-  List<double> _cache_fft = [];
-  List<double> get cache_fft => _cache_fft;
-  set cache_fft(List<double> value) {
+  List<Point<double>> _cache_fft = [];
+  List<Point<double>> get cache_fft => _cache_fft;
+  set cache_fft(List<Point<double>> value) {
     _cache_fft = value;
     // todo: save fft cache to filesystem
   }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:jam_app/components/waveform_graph.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/LoadingWidget.dart';
 import '../../components/NoListItemsCard.dart';
-import '../../components/waveform_graph.dart';
 import '../../models/WaveformEntry.dart';
 import '../../providers/WaveformsProviderV2.dart';
 
@@ -178,7 +178,7 @@ class _WaveformDetailPageState extends State<WaveformDetailPage> {
                         children: [
                           Text("graph"),
                           Divider(),
-                          WaveformGraphWidget(widget.entry),
+                          WaveformGraph(widget.entry),
                         ],
                       ),
                     )

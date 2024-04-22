@@ -7,8 +7,6 @@ import '../../../components/JammerCurrentStateConsumer.dart';
 import '../../../components/LoadingWidget.dart';
 import '../../../components/NoListItemsCard.dart';
 import '../../../components/WaveformEntryCard.dart';
-import '../../../components/waveform_graph.dart';
-import '../../../models/WaveformEntry.dart';
 import '../../waveform/waveform_details_page.dart';
 
 class WaveformsTab extends StatefulWidget {
