@@ -3,13 +3,25 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:jam_app/providers/JammerStateProvider.dart';
 
 import '../models/WaveformEntry.dart';
 import '../services/jammer_services.dart';
 
 enum WaveformFilter {local, jammer}
+Map<WaveformFilter, String> filter_names ={
+  WaveformFilter.local: "Local",
+  WaveformFilter.jammer: "Jammer Hw",
+};
 
+final filter_icons = Map.fromEntries(WaveformFilter.values.map((e) {
+  if(e==WaveformFilter.local)
+    return MapEntry(e, Icon(Icons.smartphone));
+  if(e==WaveformFilter.jammer)
+    return MapEntry(e, Icon(Icons.settings_input_antenna));
+  return MapEntry(e, Icon(Icons.question_mark));
+}));
 
 
 class WaveformsProviderV2 extends ChangeNotifier {

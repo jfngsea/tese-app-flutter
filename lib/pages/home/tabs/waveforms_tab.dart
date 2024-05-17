@@ -7,6 +7,7 @@ import '../../../components/JammerCurrentStateConsumer.dart';
 import '../../../components/LoadingWidget.dart';
 import '../../../components/NoListItemsCard.dart';
 import '../../../components/WaveformEntryCard.dart';
+
 import '../../waveform/waveform_details_page.dart';
 
 class WaveformsTab extends StatefulWidget {
@@ -17,13 +18,7 @@ class WaveformsTab extends StatefulWidget {
 }
 
 class _WaveformsTabState extends State<WaveformsTab> {
-  final location_icons = Map.fromEntries(WaveformFilter.values.map((e) {
-    if(e==WaveformFilter.local)
-      return MapEntry(e, Icon(Icons.smartphone));
-    if(e==WaveformFilter.jammer)
-      return MapEntry(e, Icon(Icons.settings_input_antenna));
-    return MapEntry(e, Icon(Icons.question_mark));
-  }));
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +37,8 @@ class _WaveformsTabState extends State<WaveformsTab> {
             icon: Icon(Icons.download),
             onPressed: null,
           ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: provider.update_local_force,
-          ),
+
+
         ],
       ),
       body: Builder(
@@ -62,7 +55,7 @@ class _WaveformsTabState extends State<WaveformsTab> {
                 const JammerCurrentStateConsumer(),
 
                 if (!provider.hasEntries) ...[
-                  const Expanded(child: NoListItemsCard()),
+                  const Expanded(child: NoListItemsCard("Waveforms")),
                 ] else ...[
                   // Filters Row
                   Row(
@@ -76,8 +69,8 @@ class _WaveformsTabState extends State<WaveformsTab> {
                                 .map((e) => FilterChip(
                               label: Row(
                                 children: [
-                                  location_icons[e]!,
-                                  Text(e.name)
+                                  filter_icons[e]!,
+                                  Text(filter_names[e]!)
                                 ],
                               ),
                               selected: provider.filters.contains(e),
@@ -102,7 +95,7 @@ class _WaveformsTabState extends State<WaveformsTab> {
                       provider.entries.elementAt(index),
                       (entry) {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => WaveformDetailPage(entry)));
+                            builder: (context) => WaveformDetailPageV2(entry)));
                       },
                     ),
                     itemCount: provider.entries.length,

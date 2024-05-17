@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class NoListItemsCard extends StatelessWidget {
-  const NoListItemsCard({super.key});
+  final String file_type;
+  const NoListItemsCard(this.file_type, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +12,7 @@ class NoListItemsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(Icons.add_box_outlined, size: 62,),
-          Text("No waveforms available!"),
+          Text("No $file_type available!"),
         ],
       ),
     );

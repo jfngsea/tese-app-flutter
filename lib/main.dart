@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:jam_app/pages/home/home.dart';
 import 'package:jam_app/providers/JammerStateProvider.dart';
 import 'package:jam_app/providers/ProfileProvider.dart';
+import 'package:jam_app/providers/ScriptsProvider.dart';
 import 'package:jam_app/providers/WaveformsProvider.dart';
 import 'package:jam_app/providers/WaveformsProviderV2.dart';
 import 'package:jam_app/services/jammer_services.dart';
@@ -46,8 +47,12 @@ void main() async {
         create: (context) =>
             ProfileProvider(service, Provider.of<WaveformsProviderV2>(context, listen: false),storage_dir),
         update: (context, prov, pp) => pp!..wf_provider=prov,
-
       ),
+
+      ChangeNotifierProvider(
+        create: (context) => ScriptsProvider(service, storage_dir),
+      ),
+
       ChangeNotifierProvider(
         create: (context) => WaveformsProvider(service),
       )
@@ -70,6 +75,7 @@ class MyApp extends StatelessWidget {
           appBarTheme: AppBarTheme(elevation: 4)
       ),
       home: MyHomePage(),
+        debugShowCheckedModeBanner: false
     );
   }
 }

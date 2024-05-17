@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:jam_app/models/JammerProfileModel.dart';
 import 'package:jam_app/models/JammerSettingsModel.dart';
 import 'package:flutter/foundation.dart';
+import 'package:jam_app/models/JammerStateModel.dart';
 import 'package:jam_app/models/WaveformEntry.dart';
 import 'package:jam_app/services/jammer_services.dart';
 
@@ -32,10 +33,12 @@ class JammerStateProvider extends ChangeNotifier {
   String error_msg ="";
   DateTime? lastUpdate;
 
+  JammerStateModel? _jammer_state = null;
   JammerProfileModel? _jammer_profile = null;
   JammerSettingsModel? _jammer_settings = null;
   Map<String, WaveformEntry> waveforms = {};
 
+  JammerStateModel? get jammer_state => _jammer_state;
   JammerProfileModel? get profile => _jammer_profile;
   JammerSettingsModel? get settings => _jammer_settings;
 
@@ -50,6 +53,7 @@ class JammerStateProvider extends ChangeNotifier {
     // api call
     try{
       final response = await _service.get_state();
+      _jammer_state = response;
       _jammer_profile = response.profile;
       _jammer_settings = response.settings;
 
@@ -76,6 +80,27 @@ class JammerStateProvider extends ChangeNotifier {
     }
     // update state
     notifyListeners();
+  }
+
+  Future<bool> reset() async {
+    try {
+      await _service.reset();
+      return true;
+    } on HttpException {
+      return false;
+    }
+  }
+
+  Future<bool> transmission_poweron(bool powerOn) async {
+    try {
+      await _service.set_transmission_on(powerOn);
+      // temporary update to local state so ui can update
+      _jammer_state?.trasmission_on=powerOn;
+      notifyListeners();
+      return true;
+    } on HttpException {
+      return false;
+    }
   }
 
 }

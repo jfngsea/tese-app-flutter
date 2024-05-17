@@ -22,7 +22,7 @@ class JammerService {
 
 
   // STATE GROUP
-  static const String state_path="statev2";
+  static const String state_path="state";
 
   Future<JammerStateModel> get_state() async {
     final response = await http
@@ -72,19 +72,46 @@ class JammerService {
       headers: headers,
     );
 
-
-    //req.headers=headers;
-
     if (response.statusCode == 200) {
       return true;
     } else {
       throw HttpException('${response.statusCode}');
     }
-
-
-
   }
 
+  Future<bool> post_script_trusted(String path) async {
+    final request = http.MultipartRequest("POST", Uri.parse("$JAMMER_API_PROT://$_host_url/script/trusted_script"));
+    request.files.add(await http.MultipartFile.fromPath("file", path, filename:path.split(Platform.pathSeparator).last));
+
+    final response = await request.send();
+    //final response = await http.post(Uri.parse("$JAMMER_API_PROT://$_host_url/waveform/file"), body: waveform.readAsBytesSync());
+    if(response.statusCode==200){
+      return true;
+    }
+    throw HttpException('${response.statusCode}');
+  }
+
+  Future<void> reset() async {
+    final response = await http
+        .get(Uri.parse("$JAMMER_API_PROT://$_host_url/$state_path/reset"));
+
+    if (response.statusCode == 200) {
+      return;
+    } else {
+      throw HttpException('${response.statusCode}:${response.body}');
+    }
+  }
+
+  Future<void> set_transmission_on(bool powerOn) async {
+    final response = await http
+        .post(Uri.parse("$JAMMER_API_PROT://$_host_url/$state_path/transmission/$powerOn"));
+
+    if (response.statusCode == 200) {
+      return;
+    } else {
+      throw HttpException('${response.statusCode}:${response.body}');
+    }
+  }
 
   // WAVEFORM GROUP
   Future<List<String>> get_waveform_list() async {

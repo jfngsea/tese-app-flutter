@@ -5,7 +5,6 @@ class JammerProfileModel{
   double mixer_freq;
   double mixer_phase;
 
-  int nyquist_zone;
   int? decimation_factor;
   int? interpolation_factor;
 
@@ -14,7 +13,6 @@ class JammerProfileModel{
       this.waveform_name,
       this.mixer_freq,
       this.mixer_phase,
-      this.nyquist_zone,
       [this.decimation_factor, this.interpolation_factor]
       );
 
@@ -25,7 +23,6 @@ class JammerProfileModel{
           json["waveform_name"] as String,
           double.parse(json["mixer_freq"].toString()),
           double.parse(json["mixer_phase"].toString()),
-          int.parse(json["nyquist_zone"].toString()),
         );
 
       model.decimation_factor= json['decimation_factor']==null? null: (json['decimation_factor'] as num).round();

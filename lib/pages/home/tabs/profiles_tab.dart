@@ -33,30 +33,35 @@ class ProfilesTab extends StatelessWidget {
         children: [
           const JammerCurrentStateConsumer(),
           if (provider.local_profiles.isEmpty) ...[
-            const Expanded(child: NoListItemsCard()),
+            const Expanded(child: NoListItemsCard("Profiles")),
           ] else ...[
             Expanded(
-              child: ListView.builder(
-                itemCount: provider.local_profiles.length,
-                itemBuilder: (context, index) => ListTile(
-                  title: Text(provider.local_profiles[index]),
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            ProfileDetailPage(provider.local_profiles[index])));
-                  },
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () => delete_on_click(context, provider.local_profiles[index]),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                  itemCount: provider.local_profiles.length,
+                  itemBuilder: (context, index) => Card(
+                    child: ListTile(
+                      title: Text(provider.local_profiles[index]),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                ProfileDetailPage(provider.local_profiles[index])));
+                      },
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () => delete_on_click(context, provider.local_profiles[index]),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.upload),
+                            onPressed: () => upload_on_click(context, provider.local_profiles[index]),
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.upload),
-                        onPressed: () => upload_on_click(context, provider.local_profiles[index]),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),

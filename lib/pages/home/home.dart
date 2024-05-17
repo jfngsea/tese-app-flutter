@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jam_app/pages/home/tabs/main_tab.dart';
 import 'package:jam_app/pages/home/tabs/profiles_tab.dart';
+import 'package:jam_app/pages/home/tabs/scripts_tab.dart';
 import 'package:jam_app/pages/home/tabs/tbd.dart';
 import 'package:jam_app/pages/home/tabs/waveforms_tab.dart';
 
@@ -16,9 +17,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     MainTab(),
-    ProfilesTab(),
     WaveformsTab(),
-    TBDTab()
+    ProfilesTab(),
+    ScriptsTab()
   ];
 
   @override
@@ -36,9 +37,9 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Profiles"),
           BottomNavigationBarItem(icon: Icon(Icons.wifi_channel), label: "Waveforms"),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "????"),
+          BottomNavigationBarItem(icon: Icon(Icons.article), label: "Profiles"),
+          BottomNavigationBarItem(icon: Icon(Icons.code), label: "Scripts"),
         ],
       ),
     );

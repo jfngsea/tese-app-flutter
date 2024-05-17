@@ -31,35 +31,50 @@ class _WaveformGraphState extends State<WaveformGraph> {
   bool isLoading = true;
   List<FlSpot> spots = [];
   List<FlSpot> all_spots = [];
+  double maxY=50,minY=0;
 
   double min_y_val = 0;
   RenderTypeEnum rendertype = RenderTypeEnum.avg_all;
 
-  double minX =0 , maxX=0;
-  int zoom=0;
-  int panning_offset = 0;
+  double graph_minX =0 , graph_maxX=0;
+  double lastMinXValue =0 , lastMaxXValue=0;
+  int _zoom=0;
+  int _panning = 0;
 
 
   int nr_points_threshold = 10000;
   bool below_threshold = false;
   bool full_render_upclose = false;
 
-  void update_graph({int? new_zoom, int? panning }){
-    new_zoom ??= zoom;
-    panning ??= panning_offset;
+  void reset_graph() {
+    setState(() {
+      graph_minX=0;
+      graph_maxX = spots.last.x;
+      _zoom =0;
+      _panning =0;
+      full_render_upclose =false;
+    });
+  }
 
-    double percentagem_to_remove = min(new_zoom / 100, 0.999);
-    //int nr_points_keep = max((all_spots.length * percentagem_to_keep).toInt(), 1);
+  void update_graph({int? zoom, int? panning }){
+    zoom ??= _zoom;
+    panning ??= _panning;
+
+    int center_x = all_spots[all_spots.length~/2].x.toInt();
+
+
+
+    double percentagem_to_remove = min(zoom / 100, 0.999);
 
     int n_points_remove = (all_spots.length * percentagem_to_remove)~/2;
-    minX =all_spots[n_points_remove].x.toDouble();
-    maxX = (all_spots[all_spots.length-n_points_remove-1].x).toDouble();
+    graph_minX =all_spots[n_points_remove].x.toDouble();
+    graph_maxX = (all_spots[all_spots.length-n_points_remove-1].x).toDouble();
 
-    if(maxX < minX){
+    if(graph_maxX < graph_minX){
       print("maxX < minX");
     }
 
-    int points_left = (maxX - minX).toInt();
+    int points_left = (graph_maxX - graph_minX).toInt();
 
     //print("Zoom: $zoom | Remove # points: $n_points_remove | total points left: $points_left | x: $minX:$maxX");
 
@@ -73,15 +88,13 @@ class _WaveformGraphState extends State<WaveformGraph> {
       below_threshold = false;
     }
 
+
     setState(() {
-      minX += panning!;
-      maxX+=panning;
-
-      zoom = new_zoom!;
-      panning_offset=panning;
+      graph_minX += panning!;
+      graph_maxX+=panning;
+      _zoom = zoom!;
+      _panning=panning;
     });
-
-
   }
 
   @override
@@ -91,41 +104,108 @@ class _WaveformGraphState extends State<WaveformGraph> {
     }
 
     if(spots.isEmpty){
-      return Text(" No fft data");
+      return Text("No fft data");
     }
+
+    bool render_all_points = (full_render_upclose && ((graph_maxX - graph_minX )<nr_points_threshold ));
+    final List<FlSpot> render_spots = render_all_points ? all_spots.sublist(graph_minX.toInt(), graph_maxX.toInt()):spots;
 
     return Column(
       children: [
         SizedBox(
           height: 500,
-          child: LineChart(
-            LineChartData(
-              minX: minX,
-              maxX: maxX,
-              clipData: const FlClipData.all(),
-              lineBarsData: [
-                LineChartBarData(
-                  spots: (full_render_upclose && below_threshold) ? all_spots.sublist(minX.toInt(), maxX.toInt()):spots,
-                  dotData: const FlDotData(show: false),
-                ),
-              ],
+          child: GestureDetector(
+            onDoubleTap: reset_graph,
+            onHorizontalDragStart: (details) {
+              lastMinXValue = graph_minX;
+              lastMaxXValue = graph_maxX;
+            },
+            onHorizontalDragUpdate: (details) {
+              var horizontalDistance = details.primaryDelta ?? 0;
+              if (horizontalDistance == 0) return;
+              print(horizontalDistance);
+              var lastMinMaxDistance = max(lastMaxXValue - lastMinXValue, 0.0);
+
+              setState(() {
+                graph_minX -= lastMinMaxDistance * 0.005 * horizontalDistance;
+                graph_maxX -= lastMinMaxDistance * 0.005 * horizontalDistance;
+
+                if (graph_minX < 0) {
+                  graph_minX = 0;
+                  graph_maxX = lastMinMaxDistance;
+                }
+                if (graph_maxX > all_spots.last.x) {
+                  graph_maxX = all_spots.last.x;
+                  graph_minX = graph_maxX - lastMinMaxDistance;
+                }
+                print("$graph_minX, $graph_maxX");
+              });
+            },
+
+
+            onScaleStart: (details) {
+              lastMinXValue = graph_minX;
+              lastMaxXValue = graph_maxX;
+            },
+            onScaleUpdate: (details) {
+              print("onScaleUpdate");
+              var horizontalScale = details.horizontalScale;
+              //print(details);
+
+              if (horizontalScale == 0) return;
+              print(horizontalScale);
+              var lastMinMaxDistance = max(lastMaxXValue - lastMinXValue, 0);
+              var newMinMaxDistance = max(lastMinMaxDistance / horizontalScale, 10);
+              var distanceDifference = newMinMaxDistance - lastMinMaxDistance;
+              print("$lastMinMaxDistance, $newMinMaxDistance, $distanceDifference");
+              setState(() {
+                final newMinX = max(
+                  lastMinXValue - distanceDifference,
+                  0.0,
+                );
+                final newMaxX = min(
+                  lastMaxXValue + distanceDifference,
+                  all_spots.last.x,
+                );
+
+                if (newMaxX - newMinX > 2) {
+                  graph_minX = newMinX;
+                  graph_maxX = newMaxX;
+                }
+                print("$graph_minX, $graph_maxX");
+              });
+            },
+
+            child: LineChart(
+              LineChartData(
+                minX: graph_minX,
+                maxX: graph_maxX,
+                lineTouchData: const LineTouchData(enabled: false),
+                clipData: const FlClipData.all(),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: render_spots,
+                    dotData: const FlDotData(show: false),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
+    ElevatedButton(onPressed: reset_graph, child: Text("reset view")),
+
     Text("Full render up close: $full_render_upclose"),
     Switch(value: full_render_upclose, onChanged: (value) => setState(() {
       full_render_upclose=value;
     }),),
 
-    Text("Panning: $panning_offset"),
-    Slider(value: panning_offset.toDouble(), max: all_spots.length.toDouble(), onChanged: (value) => update_graph(panning: value.toInt()),),
 
-    Text("Zoom: $zoom"),
+    Text("Zoom: $_zoom"),
       Slider(
-        value: zoom.toDouble(),
+        value: _zoom.toDouble(),
         max: 100,
         divisions: 100,
-        onChanged: (value) => update_graph(new_zoom: value.toInt()
+        onChanged: (value) => update_graph(zoom: value.toInt()
         )),
 
 
@@ -183,8 +263,8 @@ class _WaveformGraphState extends State<WaveformGraph> {
     setState(() {
       spots = _spots;
       all_spots=_allSpots;
-      minX=0;
-      maxX=_allSpots.last.x;
+      graph_minX=0;
+      graph_maxX=_allSpots.last.x;
       isLoading = false;
     });
   }
@@ -430,3 +510,4 @@ List<Point<double>> avg_all_threshold(List<Point<double>> points, int zero1, int
 
   return points;
 }
+
