@@ -26,6 +26,9 @@ void main() async {
     storage_dir = Directory("${Platform.environment['HOME']}/.local/share/jam_app");
     storage_dir.createSync();
   }
+  else if (Platform.isIOS) { // Platform is imported from 'dart:io' package
+    storage_dir = await getApplicationDocumentsDirectory();
+  }
   else {
     storage_dir = Directory("");
 

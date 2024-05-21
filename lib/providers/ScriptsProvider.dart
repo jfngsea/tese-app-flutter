@@ -76,16 +76,6 @@ class ScriptsProvider extends ChangeNotifier{
     return true;
   }
 
-  Future<bool> run_script_in_jammer(String script_name) async {
-    try{
-      // todo
-      final res = await _service.post_script_trusted('${_scripts_dir.path}/$script_name');
-      return res;
-    } on HttpException catch (e){
-      return false;
-    }
-  }
-
   Future<String> get_script_description(String filename) async {
     File f = File('${_scripts_dir.path}/$filename');
 
@@ -122,8 +112,9 @@ class ScriptsProvider extends ChangeNotifier{
     return commnets.reduce((value, element) => "$value\n$element");
   }
 
-  Future<void> run_script(String filename, Function(String new_state) on_new_state) async  {
+  Future<void> run_script(String filename, Function(String new_state) on_new_state, {bool restore_profile=false}) async  {
     final request = http.MultipartRequest("POST", Uri.parse("http://${service.host_url}/scripting/run"));
+    request.fields.putIfAbsent("restore_profile", () => restore_profile.toString());
     request.files.add(await http.MultipartFile.fromPath("script", '${scripts_dir.path}/$filename', filename:filename));
 
     on_new_state("Running Script...");

@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:jam_app/components/LoadingWidget.dart';
 import 'package:jam_app/providers/ScriptsProvider.dart';
@@ -167,26 +165,52 @@ class _ScriptDetailPageState extends State<ScriptDetailPage> {
                 children: [
                   ListTile(
                     title: Text("Execution"),
-                    trailing: TextButton(
-                      child: Text("Run"),
-                      onPressed: running_script? null : () async {
-                        setState(() {
-                          running_script = true;
-                          states = "";
-                          statesl.clear();
-                          states_controller.text =states;
-                        });
-                        await provider.run_script(widget.filename, (new_state) {
-                          setState(() {
-                            states = "$states${new_state}\n";
-                            statesl.add(new_state);
-                          });
-                          states_controller.text =states;
-                        },);
-                        setState(() {
-                          running_script = false;
-                        });
-                      },
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextButton(
+                          child: Text("Run"),
+                          onPressed: running_script? null : () async {
+                            setState(() {
+                              running_script = true;
+                              states = "";
+                              statesl.clear();
+                              states_controller.text =states;
+                            });
+                            await provider.run_script(widget.filename, (new_state) {
+                              setState(() {
+                                states = "$states${new_state}\n";
+                                statesl.add(new_state);
+                              });
+                              states_controller.text =states;
+                            },);
+                            setState(() {
+                              running_script = false;
+                            });
+                          },
+                        ),
+                        TextButton(
+                          child: Text("Run and Restore Profile"),
+                          onPressed: running_script? null : () async {
+                            setState(() {
+                              running_script = true;
+                              states = "";
+                              statesl.clear();
+                              states_controller.text =states;
+                            });
+                            await provider.run_script(widget.filename, (new_state) {
+                              setState(() {
+                                states = "$states${new_state}\n";
+                                statesl.add(new_state);
+                              });
+                              states_controller.text =states;
+                            }, restore_profile: true);
+                            setState(() {
+                              running_script = false;
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   //Divider(),

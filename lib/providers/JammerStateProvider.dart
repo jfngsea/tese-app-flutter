@@ -103,4 +103,13 @@ class JammerStateProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> apply_new_settings(JammerSettingsModel settings) async {
+    try{
+      return (await _service.post_settings(settings));
+    } on HttpException {
+      return false;
+    }
+
+  }
+
 }

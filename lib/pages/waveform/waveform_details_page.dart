@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:jam_app/pages/waveform/graphs/WaveformDetailPDFGraph.dart';
 import 'package:jam_app/pages/waveform/graphs/WaveformDetailTimeGraph.dart';
@@ -6,8 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../components/LoadingWidget.dart';
 import '../../components/NoListItemsCard.dart';
-import '../../components/ZoomableGraph.dart';
-import '../../components/waveform_graph_v2.dart';
+
 import '../../models/WaveformEntry.dart';
 import '../../providers/GraphDataProvider.dart';
 import '../../providers/WaveformsProviderV2.dart';

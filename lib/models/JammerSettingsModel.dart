@@ -7,7 +7,7 @@ class JammerSettingsModel{
   int? interpolation_factor;
 
 
-  JammerSettingsModel();
+  JammerSettingsModel({this.mixer_phase, this.mixer_freq, this.decimation_factor, this.interpolation_factor});
 
   factory JammerSettingsModel.fromJSON(Map<String, dynamic> json){
 
@@ -20,5 +20,25 @@ class JammerSettingsModel{
     settings.interpolation_factor = json['interpolation_factor']==null? null: (json['interpolation_factor'] as num).round();
 
     return settings;
+  }
+
+  factory JammerSettingsModel.from(JammerSettingsModel model){
+    return JammerSettingsModel(
+      mixer_freq: model.mixer_freq,
+      mixer_phase: model.mixer_phase,
+      decimation_factor: model.decimation_factor,
+      interpolation_factor: model.interpolation_factor,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = {
+      "mixer_freq":mixer_freq,
+      "mixer_phase":mixer_phase,
+      "decimation_factor":decimation_factor,
+      "interpolation_factor":interpolation_factor,
+    };
+
+    return json..removeWhere((key, value) => value ==null);
   }
 }

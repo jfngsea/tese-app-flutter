@@ -8,8 +8,9 @@ import '../../../providers/GraphDataProvider.dart';
 
 class WaveformDetailTimeGraph extends StatelessWidget {
   final int nr_points_threshold = 10000;
+  final double sample_rate_sps;
 
-  const WaveformDetailTimeGraph({super.key});
+  const WaveformDetailTimeGraph({super.key, this.sample_rate_sps=3.072E9});
 
   @override
   Widget build(BuildContext context) {
@@ -56,12 +57,24 @@ class WaveformDetailTimeGraph extends StatelessWidget {
                 topTitles:
                     AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 bottomTitles: AxisTitles(
-                    axisNameWidget: Text("Time"),
-                    sideTitles: SideTitles(reservedSize: 30, showTitles: true)
+                    axisNameWidget: Text("Time (ms)"),
+                    sideTitles: SideTitles(
+                        reservedSize: 30,
+                        showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        return Text("${sample_idx_to_time(value.toInt()).toStringAsFixed(4)}");
+                      },
+                      interval: (p1-p0)/10,
+                    )
                 ),
               ),
             ),
           );
         });
-  }
+    }
+
+    double sample_idx_to_time(int sample_idx){
+    double ts= (sample_idx/(sample_rate_sps))*1000 ;
+      return ts;
+    }
 }

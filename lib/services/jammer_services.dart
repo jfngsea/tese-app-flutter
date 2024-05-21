@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'package:jam_app/models/JammerProfileModel.dart';
+import 'package:jam_app/models/JammerSettingsModel.dart';
 
 import '../models/JammerStateModel.dart';
 
@@ -79,17 +79,27 @@ class JammerService {
     }
   }
 
-  Future<bool> post_script_trusted(String path) async {
-    final request = http.MultipartRequest("POST", Uri.parse("$JAMMER_API_PROT://$_host_url/script/trusted_script"));
-    request.files.add(await http.MultipartFile.fromPath("file", path, filename:path.split(Platform.pathSeparator).last));
+  Future<bool> post_settings(JammerSettingsModel settings) async {
+    Map<String,String> headers = {
+      'content-type' : 'application/json',
+    };
 
-    final response = await request.send();
-    //final response = await http.post(Uri.parse("$JAMMER_API_PROT://$_host_url/waveform/file"), body: waveform.readAsBytesSync());
-    if(response.statusCode==200){
+    //final bodey = jsonEncode(jsonDecode(data));
+
+    final response = await http
+        .post(
+      Uri.parse("$JAMMER_API_PROT://$_host_url/$state_path/settings"),
+      body:jsonEncode(settings.toJson()),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
       return true;
+    } else {
+      throw HttpException('${response.statusCode}');
     }
-    throw HttpException('${response.statusCode}');
   }
+
 
   Future<void> reset() async {
     final response = await http

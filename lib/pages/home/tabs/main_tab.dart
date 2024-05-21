@@ -1,8 +1,6 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:jam_app/components/JammerCurrentWaveformCard.dart';
-import 'package:jam_app/components/JammerProfileCard.dart';
-import 'package:jam_app/components/jammerSettingsCard.dart';
+import 'package:jam_app/components/jammerSettingsCardForm.dart';
 import 'package:jam_app/providers/JammerStateProvider.dart';
 import 'package:provider/provider.dart';
 
@@ -116,38 +114,19 @@ class _MainTabState extends State<MainTab> {
                   ),
                 ),
                 if(provider.jammer_state!.settings != null) ...[
-
-
-                ListTile(
-                    title: const Text("Configuration set by:"),
-                  trailing: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      provider.jammer_state!.profile == null?
-                          "Script" : "Profile"
+                  ListTile(
+                      title: const Text("Configuration set by:"),
+                    trailing: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        provider.jammer_state!.profile == null?
+                            "Script" : "Profile"
+                      ),
                     ),
                   ),
-                ),
-                    ],
+                ],
                 const Divider(),
-
-                /*CarouselSlider(
-                  items: [
-                    if(provider.profile!=null) ...[
-                      JammerProfileCard(provider.profile!),
-                    ],
-
-                    if(provider.settings!=null) ...[
-                      JammerSettingsCard(provider.settings!),
-                    ],
-                  ],
-                  options: CarouselOptions(
-                    enableInfiniteScroll: false,
-                    initialPage: 0,
-
-                  ),
-                ),*/
 
                 JammerCurrentWaveformCard(waveform:  provider.jammer_state!.ddr_state),
 
@@ -155,7 +134,8 @@ class _MainTabState extends State<MainTab> {
 
 
                 if(provider.settings != null) ...[
-                  JammerSettingsCard(provider.settings!),
+                  JammerSettingsCardForm(provider.settings!),
+                  //JammerSettingsCard(provider.settings!),
                 ],
 
 

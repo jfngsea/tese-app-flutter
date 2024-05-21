@@ -55,6 +55,8 @@ class WaveformDetailSpectrumGraph extends StatelessWidget {
                     )
                 ),
                 bottomTitles: AxisTitles(
+                  axisNameWidget: Text("Frequency (Hz)"),
+                  axisNameSize: 18,
                   sideTitles: SideTitles(
                     interval: (p0 + (p1-p0)/2).roundToDouble(),
                     getTitlesWidget: (value, meta) {
@@ -68,10 +70,25 @@ class WaveformDetailSpectrumGraph extends StatelessWidget {
                       }
                       return Text("Fs/${final_value_int}");
                     },
+
                     reservedSize: 30,
                     showTitles: true,
                   ),
+                ),
+              rightTitles: AxisTitles(
+                axisNameWidget: Text("Power (dB)"),
+                sideTitles: SideTitles(
+                  reservedSize: 50,
+                  showTitles: true,
                 )
+              ),
+              leftTitles: AxisTitles(
+                  axisNameWidget: Text("Power (dB)"),
+                  sideTitles: SideTitles(
+                    reservedSize: 50,
+                    showTitles: true,
+                  )
+              ),
             ),
           ),
         );
